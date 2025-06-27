@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.name }} - Task Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ project.name }}</h4>
+                    <div class="btn-group">
+                        <a href="{% url 'task_manager:project_edit' project_id=project.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i>Edit
+                        </a>
+                        <a href="{% url 'task_manager:project_delete' project_id=project.id %}" class="btn btn-outline-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Delete
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ project.description }}</p>
+                    <div class="d-flex gap-2 mb-4">
+                        <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'in_progress' %}primary{% else %}secondary{% endif %}">
+                            {{ project.get_status_display }}
+                        </span>
+                        <small class="text-muted">Created: {{ project.created_at|date:"M j, Y" }}</small>
+                        <small class="text-muted">Last updated: {{ project.updated_at|date:"M j, Y" }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Section -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Tasks</h5>
+                    <a href="{% url 'task_manager:task_create' project_id=project.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-2"></i>Add Task
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if tasks %}
+                        <div class="list-group">
+                            {% for task in tasks %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ task.title }}</h6>
+                                            <p class="mb-1 text-muted">{{ task.description|truncatewords:30 }}</p>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge bg-{% if task.priority == 'H' %}danger{% elif task.priority == 'M' %}warning{% else %}info{% endif %}">
+                                                    {{ task.get_priority_display }}
+                                                </span>
+                                                <span class="badge bg-{% if task.is_completed %}success{% else %}secondary{% endif %}">
+                                                    {{ task.get_status_display }}
+                                                </span>
+                                                {% if task.due_date %}
+                                                    <small class="text-muted">Due: {{ task.due_date|date:"M j, Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="{% url 'task_manager:task_edit' task_id=task.id %}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'task_manager:task_delete' task_id=task.id %}" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No tasks yet. Add your first task!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Statistics -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Project Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Task Progress</h6>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ completion_percentage }}%">
+                                {{ completion_percentage|floatformat:0 }}%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="text-primary">{{ tasks.count }}</h4>
+                            <p class="text-muted mb-0">Total Tasks</p>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success">{{ completed_tasks_count }}</h4>
+                            <p class="text-muted mb-0">Completed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    
+    .card-header {
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+    
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+    }
+    
+    .list-group-item:first-child {
+        border-top: none;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.5em 0.75em;
+    }
+    
+    .progress {
+        height: 0.75rem;
+        border-radius: 0.375rem;
+    }
+</style>
+{% endblock %} 

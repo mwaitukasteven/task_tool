@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0 text-center">Register</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-1">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-4">
+                            <label for="password1" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password1" name="password1" required>
+                            {% if form.password1.errors %}
+                                <div class="text-danger mt-1">{{ form.password1.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Your password must be at least 8 characters long and contain letters and numbers.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password2" name="password2" required>
+                            {% if form.password2.errors %}
+                                <div class="text-danger mt-1">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                        </div>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p class="mb-2">Already have an account?</p>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

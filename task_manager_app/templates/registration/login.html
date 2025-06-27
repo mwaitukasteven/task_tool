@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0 text-center">Login</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" id="id_username" required>
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                            {% if form.password.errors %}
+                                <div class="text-danger mt-1">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                        </div>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p class="mb-2">Don't have an account?</p>
+                        <a href="{% url 'task_manager:register' %}" class="btn btn-outline-primary">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

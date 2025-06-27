@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Task Manager{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2">Total Projects</h6>
+                            <h2 class="mb-0">{{ total_projects }}</h2>
+                        </div>
+                        <i class="fas fa-project-diagram fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2">Completed Projects</h6>
+                            <h2 class="mb-0">{{ completed_projects }}</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2">Active Projects</h6>
+                            <h2 class="mb-0">{{ active_projects }}</h2>
+                        </div>
+                        <i class="fas fa-tasks fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2">Total Tasks</h6>
+                            <h2 class="mb-0">{{ total_tasks }}</h2>
+                        </div>
+                        <i class="fas fa-clipboard-list fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Projects -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Recent Projects</h5>
+                    <a href="{% url 'task_manager:project_list' %}" class="btn btn-outline-primary btn-sm">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_projects %}
+                        <div class="list-group list-group-flush">
+                            {% for project in recent_projects %}
+                                <a href="{% url 'task_manager:project_detail' project_id=project.id %}" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ project.name }}</h6>
+                                            <p class="mb-1 text-muted small">{{ project.description|truncatewords:20 }}</p>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'in_progress' %}primary{% else %}secondary{% endif %}">
+                                                    {{ project.get_status_display }}
+                                                </span>
+                                                <small class="text-muted">Created: {{ project.created_at|date:"M j, Y" }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-light text-dark">
+                                                {{ project.tasks.count }} Tasks
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No projects yet. Create your first project!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Tasks -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Recent Tasks</h5>
+                    <a href="{% url 'task_manager:task_list' %}" class="btn btn-outline-primary btn-sm">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_tasks %}
+                        <div class="list-group list-group-flush">
+                            {% for task in recent_tasks %}
+                                <a href="{% url 'task_manager:task_list' %}" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ task.title }}</h6>
+                                            <p class="mb-1 text-muted small">{{ task.description|truncatewords:20 }}</p>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge bg-{% if task.priority == 'H' %}danger{% elif task.priority == 'M' %}warning{% else %}info{% endif %}">
+                                                    {{ task.get_priority_display }}
+                                                </span>
+                                                <span class="badge bg-{% if task.is_completed %}success{% else %}secondary{% endif %}">
+                                                    {{ task.get_status_display }}
+                                                </span>
+                                                {% if task.due_date %}
+                                                    <small class="text-muted">Due: {{ task.due_date|date:"M j, Y H:i" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="text-muted">{{ task.project.name }}</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No tasks yet. Add your first task!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    
+    .card-header {
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+    
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        transition: background-color 0.2s;
+    }
+    
+    .list-group-item:first-child {
+        border-top: none;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.5em 0.75em;
+    }
+</style>
+{% endblock %} 
