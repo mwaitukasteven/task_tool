@@ -1,5 +1,5 @@
 To open this project you have to:
-1. open the teminal
+1. open the terminal
 2. activate virtual environment by the following command: 
    env\Scripts\activate
    
